@@ -17,10 +17,10 @@ jobs:
       # 2. Clonar repos secundarios
       - name: Clone Microservice Repos
         run: |
-          git clone https://github.com/TomAlcarraz/OrdersServiceDevops2024.git
-          git clone https://github.com/TomAlcarraz/PaymentsServiceDevops2024.git
-          git clone https://github.com/TomAlcarraz/ProductsServiceDevops2024.git
-          git clone https://github.com/TomAlcarraz/ShippingServiceDevops2024.git
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/OrdersServiceDevops2024.git
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/PaymentsServiceDevops2024.git
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ProductsServiceDevops2024.git
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ShippingServiceDevops2024.git
 
       # 3. Loguearse en el registro Docker
       - name: Log in to Docker Hub
