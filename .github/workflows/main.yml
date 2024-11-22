@@ -33,6 +33,7 @@ jobs:
       - name: Build and Push All Microservices
         run: |
           for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
-            docker build --build-arg SERVICE_DIR=$service -t TomAlcarraz/$service:latest .
-            docker push TomAlcarraz/$service:latest
+            lower_service=$(echo $service | tr '[:upper:]' '[:lower:]')
+            docker build --build-arg SERVICE_DIR=$service -t tomalcarraz/$lower_service .
+            docker push tomalcarraz/$lower_service:latest
           done
