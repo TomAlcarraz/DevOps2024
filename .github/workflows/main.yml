@@ -32,8 +32,7 @@ jobs:
       # 4. Construir y publicar imágenes para todos los microservicios
       - name: Build and Push All Microservices
         run: |
-          for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
-            lower_service=$(echo $service | tr '[:upper:]' '[:lower:]')
-            docker build --build-arg SERVICE_DIR=$service -t tomalcarraz/$lower_service .
-            docker push tomalcarraz/$lower_service:latest
+          for service in orders-service-example payments-service-example products-service-example shipping-service-example; do
+            docker build -t tomalcarraz/${service}:latest $service
+            docker push tomalcarraz/${service}:latest
           done
