@@ -32,7 +32,17 @@ jobs:
       # 4. Construir y publicar imágenes para todos los microservicios
       - name: Build and Push All Microservices
         run: |
+          # Verificar el contenido del directorio actual (solo para depuración)
+          echo "Current working directory:"
+          pwd
+          echo "Content of the current directory:"
+          ls -al
+
           for service in orders-service-example payments-service-example products-service-example shipping-service-example; do
-            docker build -t tomalcarraz/${service}:latest $service
+            echo "Building and pushing $service"
+            docker build -t tomalcarraz/${service}:latest ./$service
             docker push tomalcarraz/${service}:latest
           done
+
+    # Construir y subir cada microservicio
+        
