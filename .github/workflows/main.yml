@@ -38,11 +38,10 @@ jobs:
           echo "Content of the current directory:"
           ls -al
 
-          for service in orders-service-example payments-service-example products-service-example shipping-service-example; do
+          for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
             echo "Building and pushing $service"
-            docker build -t tomalcarraz/${service}:latest ./$service
-            docker push tomalcarraz/${service}:latest
+            docker build -t tomalcarraz/${service,,}:latest ./$service
+            docker push tomalcarraz/${service,,}:latest
           done
 
-    # Construir y subir cada microservicio
-        
+
