@@ -65,3 +65,44 @@ jobs:
       - name: List Docker Images
         run: |
           docker images
+
+      # 7. Configurar Credenciales AWS para acceder a ECR
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Cambia según la región que uses
+      
+      # 8. Login a AWS ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      # 9. Crear etiquetas y push a ECR
+      - name: Tag and Push Docker Images to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY_ORDERS: "orders-service"
+          ECR_REPOSITORY_PAYMENTS: "payments-service"
+          ECR_REPOSITORY_PRODUCTS: "products-service"
+          ECR_REPOSITORY_SHIPPING: "shipping-service"
+          IMAGE_TAG: "latest"
+        run: |
+          services=("OrdersServiceDevops2024" "PaymentsServiceDevops2024" "ProductsServiceDevops2024" "ShippingServiceDevops2024")
+          repos=($ECR_REPOSITORY_ORDERS $ECR_REPOSITORY_PAYMENTS $ECR_REPOSITORY_PRODUCTS $ECR_REPOSITORY_SHIPPING)
+      
+          for i in "${!services[@]}"; do
+            service="${services[$i]}"
+            repository="${repos[$i]}"
+            
+            # Tag the Docker image
+            docker tag tomalcarraz/${service,,}:latest $ECR_REGISTRY/$repository:$IMAGE_TAG
+      
+            # Push the Docker image to ECR
+            docker push $ECR_REGISTRY/$repository:$IMAGE_TAG
+          done
+      
+      
+
+      
