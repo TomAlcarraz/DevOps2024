@@ -21,6 +21,7 @@ jobs:
           git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/PaymentsServiceDevops2024.git
           git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ProductsServiceDevops2024.git
           git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ShippingServiceDevops2024.git
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ReactDevops2024.git
 
       # 3. Verificar el contenido del directorio actual (solo para depuración)
       - name: Verify Current Working Directory
@@ -30,7 +31,29 @@ jobs:
           echo "Content of the current directory:"
           ls -al
 
-      # 4. Construir las imágenes Docker para todos los microservicios
+      # 4. Construcción y validación del aplicativo React
+      - name: Build and Test React Application
+        working-directory: ./ReactDevops2024  # Ir al directorio del frontend
+        run: |
+          # Configurar la versión de Node.js
+          echo "Setting up Node.js"
+          node -v || curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          echo "Node.js version:"
+          node -v
+
+          # Instalar dependencias y construir la aplicación
+          echo "Installing dependencies"
+          npm install
+
+          echo "Building React application"
+          npm run build
+
+          # Ejecutar pruebas (opcional, recomendado)
+          echo "Running tests"
+          npm test -- --watchAll=false
+
+      # 5. Construir las imágenes Docker para todos los microservicios
       - name: Build Docker Images for All Microservices
         run: |
           for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
@@ -38,7 +61,7 @@ jobs:
             docker build -t tomalcarraz/${service,,}:latest ./$service
           done
 
-      # 5. Verificar las imágenes Docker construidas
+      # 6. Verificar las imágenes Docker construidas
       - name: List Docker Images
         run: |
           docker images
