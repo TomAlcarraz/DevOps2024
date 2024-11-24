@@ -14,58 +14,7 @@ jobs:
       - name: Checkout Main Repository
         uses: actions/checkout@v3
 
-      # 2. Clonar repos secundarios
-      - name: Clone Microservice Repos
-        run: |
-          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/OrdersServiceDevops2024.git
-          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/PaymentsServiceDevops2024.git
-          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ProductsServiceDevops2024.git
-          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ShippingServiceDevops2024.git
-          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ReactDevops2024.git
-
-      # 3. Verificar el contenido del directorio actual (solo para depuración)
-      - name: Verify Current Working Directory
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Content of the current directory:"
-          ls -al
-
-      # 4. Construcción y validación del aplicativo React
-      - name: Build and Test React Application
-        working-directory: ./ReactDevops2024  # Ir al directorio del frontend
-        run: |
-          # Configurar la versión de Node.js
-          echo "Setting up Node.js"
-          node -v || curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          echo "Node.js version:"
-          node -v
-
-          # Instalar dependencias y construir la aplicación
-          echo "Installing dependencies"
-          npm install
-
-          echo "Building React application"
-          npm run build
-
-          # Ejecutar pruebas (opcional, recomendado)
-          echo "Running tests"
-          npm test -- --watchAll=false
-
-      # 5. Construir las imágenes Docker para todos los microservicios
-      - name: Build Docker Images for All Microservices
-        run: |
-          for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
-            echo "Building image for $service"
-            docker build -t tomalcarraz/${service,,}:latest ./$service
-          done
-
-      # 6. Verificar las imágenes Docker construidas
-      - name: List Docker Images
-        run: |
-          docker images
-
+      
       # 7. Configurar Credenciales AWS para acceder a ECR
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -80,30 +29,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       
-      # 9. Crear etiquetas y push a ECR
-      - name: Tag and Push Docker Images to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY_ORDERS: "orders-service"
-          ECR_REPOSITORY_PAYMENTS: "payments-service"
-          ECR_REPOSITORY_PRODUCTS: "products-service"
-          ECR_REPOSITORY_SHIPPING: "shipping-service"
-          IMAGE_TAG: "latest"
-        run: |
-          services=("OrdersServiceDevops2024" "PaymentsServiceDevops2024" "ProductsServiceDevops2024" "ShippingServiceDevops2024")
-          repos=($ECR_REPOSITORY_ORDERS $ECR_REPOSITORY_PAYMENTS $ECR_REPOSITORY_PRODUCTS $ECR_REPOSITORY_SHIPPING)
-      
-          for i in "${!services[@]}"; do
-            service="${services[$i]}"
-            repository="${repos[$i]}"
-            
-            # Tag the Docker image
-            docker tag tomalcarraz/${service,,}:latest $ECR_REGISTRY/$repository:$IMAGE_TAG
-      
-            # Push the Docker image to ECR
-            docker push $ECR_REGISTRY/$repository:$IMAGE_TAG
-          done
-      
+    
       
 
       
