@@ -1,8 +1,8 @@
-
 FROM maven:3.8.6-openjdk-11 AS build
 ARG SERVICE_NAME
 
 WORKDIR /app
+
 
 COPY ${SERVICE_NAME}/pom.xml .
 COPY ${SERVICE_NAME}/src ./src
