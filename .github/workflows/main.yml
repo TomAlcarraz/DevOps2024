@@ -61,8 +61,10 @@ jobs:
             docker build \
               --build-arg SERVICE_NAME=$service \
               -t tomalcarraz/${service,,}:latest \
-              -f ./Dockerfile .
+              -f ./Dockerfile \
+              ./$service
           done
+
 
       # 6. Verificar las imágenes Docker construidas
       - name: List Docker Images
