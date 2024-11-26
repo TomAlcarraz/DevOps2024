@@ -104,6 +104,3 @@ jobs:
             docker push $ECR_REGISTRY/$repository:$IMAGE_TAG
           done
       
-      
-
-      
