@@ -58,13 +58,8 @@ jobs:
         run: |
           for service in OrdersServiceDevops2024 PaymentsServiceDevops2024 ProductsServiceDevops2024 ShippingServiceDevops2024; do
             echo "Building image for $service"
-            docker build \
-              --build-arg SERVICE_NAME=$service \
-              -t tomalcarraz/${service,,}:latest \
-              -f ./Dockerfile \
-              ./$service
+            docker build -t tomalcarraz/${service,,}:latest ./$service
           done
-
 
       # 6. Verificar las imágenes Docker construidas
       - name: List Docker Images
@@ -108,7 +103,4 @@ jobs:
             # Push the Docker image to ECR
             docker push $ECR_REGISTRY/$repository:$IMAGE_TAG
           done
-      
-      
-
       
