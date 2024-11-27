@@ -46,9 +46,9 @@ module "eks" {
   cluster_name    = var.eks_cluster_name
   cluster_version = "1.23"
   vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.private_subnets  # Cambia subnets por subnet_ids
+  subnet_ids      = module.vpc.private_subnets  
 
-  eks_managed_node_groups = { # Configuración actualizada para node groups
+  eks_managed_node_groups = { 
     devops-nodes = {
       desired_capacity = 2
       min_size         = 1
