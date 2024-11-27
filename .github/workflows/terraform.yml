@@ -45,15 +45,19 @@ jobs:
       # 4. Inicializar Terraform
       - name: Terraform Init
         run: terraform init
+        working-directory: ./terraform
 
       # 5. Validar configuración de Terraform
       - name: Terraform Validate
         run: terraform validate
+        working-directory: ./terraform
 
       # 6. Planificar cambios en Terraform
       - name: Terraform Plan
         run: terraform plan
+        working-directory: ./terraform
 
       # 7. Aplicar cambios en Terraform
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        working-directory: ./terraform
