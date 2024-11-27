@@ -21,6 +21,7 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           role-to-assume: arn:aws:iam::285780467472:role/LabRole
           aws-region: us-east-1
+          role-skip-session-tagging: true
 
 
       # 3. Instalar Terraform
