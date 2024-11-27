@@ -20,8 +20,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           role-to-assume: arn:aws:iam::285780467472:role/LabRole
-          aws-region: us-east-1  # Cambia según la región que uses
-          role-session-name: "terraform-session"
+          aws-region: us-east-1
+          role-session-name: terraform-session
+          role-skip-session-tagging: true
 
       # 2. Configurar credenciales AWS
       #- name: Configure AWS Credentials
