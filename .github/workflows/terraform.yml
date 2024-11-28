@@ -18,8 +18,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
-          role-to-assume: arn:aws:iam::285780467472:role/LabRole
-          role-skip-session-tagging: true
+          #role-to-assume: arn:aws:iam::285780467472:role/LabRole
+          #role-skip-session-tagging: true
 
       - name: Verify AWS Access
         run: aws s3 ls
