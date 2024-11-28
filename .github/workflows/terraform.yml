@@ -8,43 +8,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout del código
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # 2. Configurar credenciales de AWS
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          debug-logs: true
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          role-to-assume: arn:aws:sts::285780467472:assumed-role/voclabs/user2389160=ta303898@fi365.ort.edu.uy
           aws-region: us-east-1
-         # role-skip-session-tagging: true
+          role-to-assume: arn:aws:iam::285780467472:role/LabRole
 
+      # 3. Validar conexión con AWS
+      - name: Verify AWS Access
+        run: aws s3 ls
 
-      # 3. Instalar Terraform
+      # 4. Instalar Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.0
 
-      # 4. Inicializar Terraform
+      # 5. Inicializar Terraform
       - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
 
-      # 5. Validar configuración de Terraform
+      # 6. Validar configuración de Terraform
       - name: Terraform Validate
         run: terraform validate
         working-directory: ./terraform
 
-      # 6. Planificar cambios en Terraform
+      # 7. Planificar cambios en Terraform
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./terraform
 
-      # 7. Aplicar cambios en Terraform
+      # 8. Aplicar cambios en Terraform
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./terraform
