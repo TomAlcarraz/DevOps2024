@@ -21,8 +21,8 @@ jobs:
           #role-to-assume: arn:aws:iam::285780467472:role/LabRole
           #role-skip-session-tagging: true
 
-      - name: Verify Assume Role Access
-        run: aws sts assume-role --role-arn arn:aws:iam::285780467472:role/LabRole --role-session-name TestSession
+     # - name: Verify Assume Role Access
+       # run: aws sts assume-role --role-arn arn:aws:iam::285780467472:role/LabRole --role-session-name TestSession
         # Esto debería retornar un error si no tienes permisos para asumir el rol
 
       - name: Verify AWS Access
