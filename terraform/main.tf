@@ -17,9 +17,9 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
-  assume_role {
-    role_arn = "arn:aws:iam::285780467472:role/LabRole" 
-  }
+  # assume_role {
+  #  role_arn = "arn:aws:iam::285780467472:role/LabRole" 
+  # }
 }
 
 module "vpc" {
