@@ -48,6 +48,10 @@ module "eks" {
   vpc_id          = module.vpc.vpc_id
   subnet_ids      = module.vpc.private_subnets  
 
+  assume_role {
+  role_arn = "arn:aws:iam::285780467472:role/LabRole" 
+  }
+
   eks_managed_node_groups = { 
     devops-nodes = {
       desired_capacity = 2
