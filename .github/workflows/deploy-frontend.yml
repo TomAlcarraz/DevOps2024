@@ -71,11 +71,12 @@ jobs:
       # 8. Sincronizar el build con el bucket S3
       - name: Deploy to S3
         run: |
-          aws s3 sync ./ReactDevops2024/dist/apps/ s3://frontendbucket303898/ --delete
+          aws s3 sync ./ReactDevops2024/dist/apps/catalog s3://frontendbucket303898/ --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
 
       # 9. Configurar el bucket como un sitio web estático (opcional)
       - name: Enable Static Website Hosting
