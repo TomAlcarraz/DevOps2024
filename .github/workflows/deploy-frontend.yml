@@ -12,7 +12,12 @@ jobs:
       - name: Checkout Main Repository
         uses: actions/checkout@v3
 
-      # 2. Verificar el contenido del directorio actual (solo para depuración)
+      # 2. Clonar el repositorio del frontend
+      - name: Clone Frontend Repository
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ReactDevops2024.git
+
+      # 3. Verificar el contenido del directorio actual (para depuración)
       - name: Verify Current Working Directory
         run: |
           echo "Current working directory:"
@@ -20,7 +25,7 @@ jobs:
           echo "Content of the current directory:"
           ls -al
 
-      # 3. Construcción y validación del aplicativo React
+      # 4. Construcción y validación del aplicativo React
       - name: Build React Application
         working-directory: ./ReactDevops2024  # Ir al directorio del frontend
         run: |
@@ -38,7 +43,7 @@ jobs:
           echo "Building React application"
           npm run build
 
-      # 4. Configurar credenciales AWS para S3
+      # 5. Configurar credenciales AWS para S3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -47,7 +52,7 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      # 5. Sincronizar el build con el bucket S3
+      # 6. Sincronizar el build con el bucket S3
       - name: Deploy to S3
         run: |
           aws s3 sync ./ReactDevops2024/build s3://frontendbucket303898 --delete
@@ -56,7 +61,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-      # 6. Configurar el bucket como un sitio web estático (opcional)
+      # 7. Configurar el bucket como un sitio web estático (opcional)
       - name: Enable Static Website Hosting
         run: |
           aws s3 website s3://frontendbucket303898/ --index-document index.html --error-document index.html
