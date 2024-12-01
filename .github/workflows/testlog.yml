@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Test AWS log in
 
 on:
   workflow_dispatch:
