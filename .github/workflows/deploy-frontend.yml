@@ -1,49 +1,36 @@
-name: Deploy Frontend to S3
+name: Frontend Deployment
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-frontend:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # 1. Checkout del repositorio principal
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
-
+      # 2. Configurar credenciales AWS para S3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1  
+          aws-region: us-east-1
 
-      - name: Build project
-        run: |
-          npm install
-          npm run build
-
+      # 3. Sincronizar el build con el bucket S3
       - name: Deploy to S3
-        run: |
-          aws s3 sync ./build s3://frontendbucket303898/ --delete
-          aws s3 website s3://frontendbucket303898/ --index-document index.html --error-document index.html
+        uses: aws-actions/s3-sync@v2
+        with:
+          source-dir: ./ReactDevops2024/build  # Carpeta de salida del build de React
+          destination-bucket: frontendbucket303898
+          bucket-region: us-east-1
+          delete: true  # Elimina archivos que ya no están en el build local
 
-      - name: Set public read access
+      # 4. Configurar el bucket como sitio web estático
+      - name: Enable Static Website Hosting
         run: |
-          aws s3api put-bucket-policy --bucket frontendbucket303898 --policy '{
-            "Version": "2012-10-17",
-            "Statement": [
-              {
-                "Effect": "Allow",
-                "Principal": "*",
-                "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::frontendbucket303898/*"
-              }
-            ]
-          }'
+          aws s3 website s3://frontendbucket303898/ --index-document index.html --error-document index.html
