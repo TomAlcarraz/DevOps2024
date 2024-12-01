@@ -45,11 +45,10 @@ jobs:
           echo "Building React application"
           npm run build
 
-      # 5. Verificar el contenido del directorio después del build (para depuración)
       - name: List Directories After Build
         run: |
           echo "Listing the directory structure after build..."
-          ls -R ./ReactDevops2024/build
+          ls -R ./ReactDevops2024/dist
 
       # 6. Verificar si la carpeta de build existe antes de proceder con la sincronización
       - name: Verify Build Directory Existence
