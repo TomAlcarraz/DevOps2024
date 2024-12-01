@@ -8,26 +8,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout del repositorio principal
       - name: Checkout Main Repository
         uses: actions/checkout@v3
 
-      # 2. Clonar el repositorio del frontend
       - name: Clone Frontend Repository
         run: |
           git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/TomAlcarraz/ReactDevops2024.git
 
-      # 3. Verificar el contenido del directorio actual (para depuración)
-      - name: Verify Current Working Directory
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Content of the current directory:"
-          ls -al
-
-      # 4. Construcción y validación del aplicativo React
       - name: Build React Application
-        working-directory: ./ReactDevops2024  # Ir al directorio del frontend
+        working-directory: ./ReactDevops2024  
         run: |
           # Configurar Node.js
           echo "Setting up Node.js"
@@ -43,23 +32,6 @@ jobs:
           echo "Building React application"
           npm run build
 
-      # 5. Listar todas las carpetas y archivos después del build (para depuración)
-      - name: List Directories After Build
-        run: |
-          echo "Listing the directory structure after build..."
-          ls -R ./ReactDevops2024
-
-      # 6. Verificar si el directorio build existe
-      - name: Check if Build Directory Exists
-        run: |
-          if [ -d "./ReactDevops2024/dist/apps" ]; then
-            echo "Build directory exists."
-          else
-            echo "Error: The build directory does not exist."
-            exit 1
-          fi
-
-      # 7. Configurar credenciales AWS para S3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -68,7 +40,6 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      # 8. Sincronizar el build con el bucket S3
       - name: Deploy to S3
         run: |
           aws s3 sync ./ReactDevops2024/dist/apps/catalog s3://frontendbucket303898/ --delete
@@ -77,8 +48,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-
-      # 9. Configurar el bucket como un sitio web estático (opcional)
       - name: Enable Static Website Hosting
         run: |
           aws s3 website s3://frontendbucket303898/ --index-document index.html --error-document index.html
