@@ -29,12 +29,10 @@ jobs:
       - name: Build React Application
         working-directory: ./ReactDevops2024  # Ir al directorio del frontend
         run: |
-          # Instalar Node.js de manera confiable
+          # Configurar Node.js
           echo "Setting up Node.js"
-          if ! command -v node &> /dev/null; then
-            curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-          fi
+          node -v || curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - 
+          sudo apt-get install -y nodejs
           echo "Node.js version:"
           node -v
 
@@ -45,20 +43,19 @@ jobs:
           echo "Building React application"
           npm run build
 
+      # 5. Listar todas las carpetas y archivos después del build (para depuración)
       - name: List Directories After Build
         run: |
           echo "Listing the directory structure after build..."
-          ls -R ./ReactDevops2024/dist
+          ls -R ./ReactDevops2024
 
-      # 6. Verificar si la carpeta de build existe antes de proceder con la sincronización
-      - name: Verify Build Directory Existence
+      # 6. Verificar si el directorio build existe
+      - name: Check if Build Directory Exists
         run: |
-          echo "Checking if build directory exists..."
-          if [ -d "./ReactDevops2024/build" ]; then
+          if [ -d "./ReactDevops2024/dist/apps" ]; then
             echo "Build directory exists."
           else
             echo "Error: The build directory does not exist."
-            ls -R ./ReactDevops2024  # Listar el contenido para depuración
             exit 1
           fi
 
@@ -74,7 +71,7 @@ jobs:
       # 8. Sincronizar el build con el bucket S3
       - name: Deploy to S3
         run: |
-          aws s3 sync ./ReactDevops2024/build/ s3://frontendbucket303898/ --delete
+          aws s3 sync ./ReactDevops2024/dist/apps/ s3://frontendbucket303898/ --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
