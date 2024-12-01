@@ -29,10 +29,12 @@ jobs:
       - name: Build React Application
         working-directory: ./ReactDevops2024  # Ir al directorio del frontend
         run: |
-          # Configurar Node.js
+          # Instalar Node.js de manera confiable
           echo "Setting up Node.js"
-          node -v || curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-          sudo apt-get install -y nodejs
+          if ! command -v node &> /dev/null; then
+            curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
           echo "Node.js version:"
           node -v
 
@@ -49,7 +51,17 @@ jobs:
           echo "Listing the directory structure after build..."
           ls -R ./ReactDevops2024
 
-      # 6. Configurar credenciales AWS para S3
+      # 6. Verificar si la carpeta de build existe antes de proceder con la sincronización
+      - name: Verify Build Directory Existence
+        run: |
+          if [ -d "./ReactDevops2024/build" ]; then
+            echo "Build directory exists."
+          else
+            echo "Error: The build directory does not exist."
+            exit 1
+          fi
+
+      # 7. Configurar credenciales AWS para S3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -58,16 +70,16 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
 
-      # 7. Sincronizar el build con el bucket S3
+      # 8. Sincronizar el build con el bucket S3
       - name: Deploy to S3
         run: |
-          aws s3 sync ./ReactDevops2024/build s3://frontendbucket303898 --delete
+          aws s3 sync ./ReactDevops2024/build/ s3://frontendbucket303898/ --delete
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-      # 8. Configurar el bucket como un sitio web estático (opcional)
+      # 9. Configurar el bucket como un sitio web estático (opcional)
       - name: Enable Static Website Hosting
         run: |
           aws s3 website s3://frontendbucket303898/ --index-document index.html --error-document index.html
