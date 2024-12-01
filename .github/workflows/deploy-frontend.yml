@@ -49,12 +49,12 @@ jobs:
 
       # 5. Sincronizar el build con el bucket S3
       - name: Deploy to S3
-        uses: aws-actions/s3-sync@v2
-        with:
-          source-dir: ./ReactDevops2024/build  # Carpeta de salida del build de React
-          destination-bucket: frontendbucket303898
-          bucket-region: us-east-1
-          delete: true  # Elimina archivos que ya no existen en el build local
+        run: |
+          aws s3 sync ./ReactDevops2024/build s3://frontendbucket303898 --delete
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
       # 6. Configurar el bucket como un sitio web estático (opcional)
       - name: Enable Static Website Hosting
